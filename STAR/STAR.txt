@@ -320,23 +320,16 @@ Parameters_openReadsFiles.cpp:25:20: warning: variable ‘imate’ might be clob
 
 # Pruebo si se ha instalado bien
 bea@mejora:~/STAR-2.7.9a/source$ cd --
-bea@mejora:~$ STAR -h
+bea@mejora:~$ STAR-2.7.9a/bin/Linux_x86_64/STAR
+Usage: STAR  [options]... --genomeDir /path/to/genome/index/   --readFilesIn R1.fq R2.fq
+Spliced Transcripts Alignment to a Reference (c) Alexander Dobin, 2009-2020
 
-No se ha encontrado la orden «STAR», pero se puede instalar con:
+STAR version=2.7.9a
+STAR compilation time,server,dir=2021-05-04T09:43:56-0400 vega:/home/dobin/data/STAR/STARcode/STAR.master/source
+For more details see:
+<https://github.com/alexdobin/STAR>
+<https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf>
 
-apt install rna-star
-Pregunte al administrador.
-bea@mejora:~$ STAR
+To list all parameters, run STAR --help
 
-No se ha encontrado la orden «STAR», pero se puede instalar con:
-
-apt install rna-star
-Pregunte al administrador.
-
-# Pruebo a instalarlo con apt install
-bea@mejora:~$ apt install STAR
-[sudo] contraseña para bea:
-Disculpe, el usuario bea no está autorizado para ejecutar «/usr/bin/apt install STAR» como root en mejora
-
-# Sale bien así
-bea@mejora:~$ STAR-2.7.9a/bin/Linux_x86_64/STAR -h
+# Por lo tanto se ha instalado correctamente y ya está lista para usar
