@@ -1,0 +1,49 @@
+1. Indexar el genoma
+
+Primero tenemos que generar el directorio donde se va a guardar el índice del genoma, lo creamos con mkdir
+mkdir -p OvisAries_index
+
+He descargado el archivo gtf, como viene comprimido hay que descomprimirlo
+gzip -d GCF_016772045.1_ARS-UI_Ramb_v2.0_genomic.gtf.gz
+
+Genero el índice, necesito el genoma y el archivo GTF. Ejecuto lo siguiente:
+
+STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --runMode genomeGenerate --genomeDir ./OvisAries_index --genomeFastaFiles ./Ovis_aries.fa --sjdbGTFfile GCF_016772045.1_ARS-UI_Ramb_v2.0_genomic.gtf
+
+        STAR version: 2.7.9a   compiled: 2021-05-04T09:43:56-0400 vega:/home/dobin/data/STAR/STARcode/STAR.master/source
+Oct 25 17:31:27 ..... started STAR run
+Oct 25 17:31:27 ... starting to generate Genome files
+Oct 25 17:31:34 ..... processing annotations GTF
+
+Fatal INPUT FILE error, no valid exon lines in the GTF file: ./GCF_016772045.1_ARS-UI_Ramb_v2.0_genomic.gtf
+Solution: check the formatting of the GTF file. One likely cause is the difference in chromosome naming between GTF and FASTA file.
+
+Oct 25 17:31:38 ...... FATAL ERROR, exiting
+
+Me da error porque no coincide la información que se encuentra en el genoma con la que se encuentra en el archivo GTF. Pruebo a cambiar el archivo FASTA y uso el que contiene la información genómica (Genomic FASTA .fna)
+
+STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --runMode genomeGenerate --genomeDir ./OvisAries_index --genomeFastaFiles ./Ovis_aries_Ramb_v2.0_genomic.fna --sjdbGTFfile GCF_016772045.1_ARS-UI_Ramb_v2.0_genomic.gtf
+
+ STAR version: 2.7.9a   compiled: 2021-05-04T09:43:56-0400 vega:/home/dobin/data/STAR/STARcode/STAR.master/source
+Oct 25 17:36:59 ..... started STAR run
+Oct 25 17:36:59 ... starting to generate Genome files
+Oct 25 17:37:34 ..... processing annotations GTF
+Oct 25 17:37:50 ... starting to sort Suffix Array. This may take a long time...
+Oct 25 17:38:01 ... sorting Suffix Array chunks and saving them to disk...
+Oct 25 17:48:01 ... loading chunks from disk, packing SA...
+Oct 25 17:50:46 ... finished generating suffix array
+Oct 25 17:50:46 ... generating Suffix Array index
+Oct 25 17:54:54 ... completed Suffix Array index
+Oct 25 17:54:54 ..... inserting junctions into the genome indices
+Oct 25 17:57:02 ... writing Genome to disk ...
+Oct 25 17:57:03 ... writing Suffix Array to disk ...
+Oct 25 17:58:28 ... writing SAindex to disk
+Oct 25 17:58:38 ..... finished successfully
+
+Ha salido bien!!
+
+2. Mapear las reads
+mkdir -p STAR_results
+STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --genomeDir ./OvisAries_index --readFilesIn ./fastq/MS1_filtered.fastq_1.fastq ./fastq/MS1_filtered.fastq_2.fastq --outFileNamePrefix ./STAR_results/MS1_
+Para tener archivos bam y los unmapped hay que utilizar el siguiente comando:
+STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --genomeDir ./OvisAries_index --readFilesIn ./fastq/MS1_filtered.fastq_1.fastq ./fastq/MS1_filtered.fastq_2.fastq --outFileNamePrefix ./STAR_results/MS1_1_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within KeepPairs 

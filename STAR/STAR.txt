@@ -1,0 +1,342 @@
+# Descargo STAR
+
+bea@mejora:~$ wget https://github.com/alexdobin/STAR/archive/2.7.9a.tar.gz
+--2021-10-24 13:17:58--  https://github.com/alexdobin/STAR/archive/2.7.9a.tar.gz
+Resolviendo github.com (github.com)... 140.82.121.4
+Conectando con github.com (github.com)[140.82.121.4]:443... conectado.
+Petición HTTP enviada, esperando respuesta... 302 Found
+Ubicación: https://codeload.github.com/alexdobin/STAR/tar.gz/2.7.9a [siguiente]
+--2021-10-24 13:17:58--  https://codeload.github.com/alexdobin/STAR/tar.gz/2.7.9a
+Resolviendo codeload.github.com (codeload.github.com)... 140.82.121.9
+Conectando con codeload.github.com (codeload.github.com)[140.82.121.9]:443... conectado.
+Petición HTTP enviada, esperando respuesta... 200 OK
+Longitud: no especificado [application/x-gzip]
+Guardando como: “2.7.9a.tar.gz”
+
+2.7.9a.tar.gz                     [        <=>                                       ]  10,17M  7,10MB/s    en 1,4s
+
+2021-10-24 13:18:00 (7,10 MB/s) - “2.7.9a.tar.gz” guardado [10669338]
+
+bea@mejora:~$ tar -xzf 2.7.9a.tar.gz
+bea@mejora:~$ cd STAR-2.7.9a
+
+# Lo compilo
+bea@mejora:~/STAR-2.7.9a$ cd source
+bea@mejora:~/STAR-2.7.9a/source$ make STAR
+make -C htslib lib-static
+make[1]: se entra en el directorio '/home/bea/STAR-2.7.9a/source/htslib'
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o kfunc.o kfunc.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o knetfile.o knetfile.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o kstring.o kstring.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o bgzf.o bgzf.c
+bgzf.c: In function ‘bgzf_write’:
+bgzf.c:733:5: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+  733 |     if ( !fp->is_compressed )
+      |     ^~
+bgzf.c:736:2: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+  736 |  const uint8_t *input = (const uint8_t*)data;
+      |  ^~~~~
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o faidx.o faidx.c
+faidx.c: In function ‘fai_load’:
+faidx.c:265:5: warning: this ‘else’ clause does not guard... [-Wmisleading-indentation]
+  265 |     else
+      |     ^~~~
+faidx.c:268:2: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘else’
+  268 |  if (fp == 0) {
+      |  ^~
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o hfile.o hfile.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o hfile_net.o hfile_net.c
+echo '#define HTS_VERSION "0.0.1"' > version.h
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o hts.o hts.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o sam.o sam.c
+In file included from /usr/include/string.h:495,
+                 from sam.c:3:
+In function ‘strncpy’,
+    inlined from ‘bam_hdr_write’ at sam.c:130:2:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:106:10: warning: ‘__builtin_strncpy’ output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]
+  106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o synced_bcf_reader.o synced_bcf_reader.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o vcf_sweep.o vcf_sweep.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o tbx.o tbx.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o vcf.o vcf.c
+vcf.c: In function ‘vcf_format’:
+vcf.c:1909:4: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+ 1909 |    if ( !first ) kputc(';', s); first = 0;
+      |    ^~
+vcf.c:1909:33: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1909 |    if ( !first ) kputc(';', s); first = 0;
+      |                                 ^~~~~
+vcf.c:1948:21: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+ 1948 |                     if (!first) kputc(':', s); first = 0;
+      |                     ^~
+vcf.c:1948:48: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+ 1948 |                     if (!first) kputc(':', s); first = 0;
+      |                                                ^~~~~
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o vcfutils.o vcfutils.c
+In file included from htslib/vcf.h:12,
+                 from htslib/vcfutils.h:8,
+                 from vcfutils.c:1:
+vcfutils.c: In function ‘bcf_remove_alleles’:
+vcfutils.c:291:25: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+  291 |                 assert( n=nG_ori );
+      |                         ^
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/cram_codecs.o cram/cram_codecs.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/cram_decode.o cram/cram_decode.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/cram_encode.o cram/cram_encode.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/cram_index.o cram/cram_index.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/cram_io.o cram/cram_io.c
+cram/cram_io.c: In function ‘cram_populate_ref’:
+cram/cram_io.c:1529:27: warning: ‘.tmp_’ directive writing 5 bytes into a region of size between 1 and 4096 [-Wformat-overflow=]
+ 1529 |      sprintf(path_tmp, "%s.tmp_%d", path, /*getpid(),*/ i);
+      |                           ^~~~~
+cram/cram_io.c:1529:24: note: directive argument in the range [0, 2147483647]
+ 1529 |      sprintf(path_tmp, "%s.tmp_%d", path, /*getpid(),*/ i);
+      |                        ^~~~~~~~~~~
+In file included from /usr/include/stdio.h:867,
+                 from cram/cram_io.c:51:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:36:10: note: ‘__builtin___sprintf_chk’ output between 7 and 4111 bytes into a destination of size 4096
+   36 |   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   37 |       __bos (__s), __fmt, __va_arg_pack ());
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/string.h:495,
+                 from cram/cram_io.c:55:
+In function ‘strncpy’,
+    inlined from ‘full_path’ at cram/cram_io.c:2917:6,
+    inlined from ‘cram_write_SAM_hdr’ at cram/cram_io.c:2987:3:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:106:10: warning: ‘__builtin_strncpy’ specified bound 4096 equals destination size [-Wstringop-truncation]
+  106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘strncpy’,
+    inlined from ‘full_path’ at cram/cram_io.c:2909:2,
+    inlined from ‘cram_write_SAM_hdr’ at cram/cram_io.c:2987:3:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:106:10: warning: ‘__builtin_strncpy’ specified bound 4096 equals destination size [-Wstringop-truncation]
+  106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function ‘strncpy’,
+    inlined from ‘cram_dopen’ at cram/cram_io.c:3291:2:
+/usr/include/x86_64-linux-gnu/bits/string_fortified.h:106:10: warning: ‘__builtin_strncpy’ specified bound 20 equals destination size [-Wstringop-truncation]
+  106 |   return __builtin___strncpy_chk (__dest, __src, __len, __bos (__dest));
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/cram_samtools.o cram/cram_samtools.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/cram_stats.o cram/cram_stats.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/files.o cram/files.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/mFILE.o cram/mFILE.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/md5.o cram/md5.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/open_trace_file.o cram/open_trace_file.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/pooled_alloc.o cram/pooled_alloc.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/sam_header.o cram/sam_header.c
+In file included from cram/sam_header.c:36:
+cram/sam_header.c: In function ‘sam_hdr_add_lines’:
+cram/sam_header.c:328:13: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+  328 |      assert(p->next = t);
+      |             ^
+cram/sam_header.c: In function ‘sam_hdr_vadd’:
+cram/sam_header.c:449:9: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+  449 |  assert(p->next = t);
+      |         ^
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/string_alloc.o cram/string_alloc.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/thread_pool.o cram/thread_pool.c
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/vlen.o cram/vlen.c
+cram/vlen.c: In function ‘vflen’:
+cram/vlen.c:121:9: warning: variable ‘i’ set but not used [-Wunused-but-set-variable]
+  121 |     int i;
+      |         ^
+cc -g -Wall -O2  -I. -DSAMTOOLS=1 -c -o cram/zfio.o cram/zfio.c
+ar -rc libhts.a kfunc.o knetfile.o kstring.o bgzf.o faidx.o hfile.o hfile_net.o hts.o sam.o synced_bcf_reader.o vcf_sweep.o tbx.o vcf.o vcfutils.o cram/cram_codecs.o cram/cram_decode.o cram/cram_encode.o cram/cram_index.o cram/cram_io.o cram/cram_samtools.o cram/cram_stats.o cram/files.o cram/mFILE.o cram/md5.o cram/open_trace_file.o cram/pooled_alloc.o cram/sam_header.o cram/string_alloc.o cram/thread_pool.o cram/vlen.o cram/zfio.o
+ranlib libhts.a
+make[1]: se sale del directorio '/home/bea/STAR-2.7.9a/source/htslib'
+echo Genome_transformGenome.cpp Parameters_readSAMheader.cpp ReadAlign_mapOneRead.cpp readLoad.cpp ReadAlign_mapOneReadSpliceGraph.cpp ChimericDetection_chimericDetectionMult.cpp sjdbPrepare.cpp ChimericSegment.cpp Transcriptome_classifyAlign.cpp ReadAlign_stitchPieces.cpp funCompareUintAndSuffixes.cpp SoloFeature_sumThreads.cpp SoloFeature.cpp SoloBarcode_extractBarcode.cpp BAMbinSortByCoordinate.cpp Transcriptome_quantAlign.cpp ReadAlign_alignBAM.cpp GTF_transcriptGeneSJ.cpp SoloFeature_processRecords.cpp SpliceGraph_swTraceBack.cpp Transcriptome.cpp PackedArray.cpp SoloFeature_emptyDrops_CR.cpp Stats.cpp Transcript_generateCigarP.cpp SoloReadFeature_record.cpp Transcript_transformGenome.cpp Parameters_openReadsFiles.cpp Quantifications.cpp ReadAlignChunk.cpp stitchAlignToTranscript.cpp ChimericAlign_chimericStitching.cpp signalFromBAM.cpp sjAlignSplit.cpp SoloFeature_statsOutput.cpp Genome_genomeLoad.cpp stitchWindowAligns.cpp ParametersChimeric_initialize.cpp BAMfunctions.cpp ReadAlign_maxMappableLength2strands.cpp SoloFeature_countSmartSeq.cpp serviceFuns.cpp ReadAlign_chimericDetectionOld.cpp Genome_insertSequences.cpp ReadAlign_chimericDetectionPEmerged.cpp insertSeqSA.cpp Transcriptome_geneFullAlignOverlap.cpp streamFuns.cpp ReadAlignChunk_processChunks.cpp BAMoutput.cpp SpliceGraph_findSuperTr.cpp GTF.cpp SoloReadBarcode.cpp ReadAlign_CIGAR.cpp Parameters_readFilesInit.cpp ReadAlign_outputVariation.cpp funCompareUintAndSuffixesMemcmp.cpp samHeaders.cpp ReadAlign_chimericDetectionOldOutput.cpp mapThreadsSpawn.cpp SuperTranscriptome.cpp InOutStreams.cpp stringSubstituteAll.cpp Parameters_samAttributes.cpp ReadAlign_storeAligns.cpp ReadAlign_waspMap.cpp Genome_genomeGenerate.cpp SharedMemory.cpp ParametersClip_initialize.cpp Transcript.cpp ClipMate_initialize.cpp SoloFeature_collapseUMIall.cpp extendAlign.cpp ReadAlign_transformGenome.cpp sjdbLoadFromFiles.cpp genomeScanFastaFiles.cpp sjdbBuildIndex.cpp SpliceGraph_swScoreSpliced.cpp Variation.cpp ReadAlign_outputTranscriptSAM.cpp SoloFeature_loadRawMatrix.cpp binarySearch2.cpp sjdbInsertJunctions.cpp Transcript_variationAdjust.cpp ReadAlign_peOverlapMergeMap.cpp genomeParametersWrite.cpp Parameters.cpp SoloFeature_collapseUMI_Graph.cpp SoloReadFeature_inputRecords.cpp ClipMate_clip.cpp ReadAlign_outputSpliceGraphSAM.cpp STAR.cpp bamSortByCoordinate.cpp SuffixArrayFuns.cpp Solo.cpp ReadAlign_outputAlignments.cpp SpliceGraph.cpp SoloFeature_outputResults.cpp SoloRead.cpp soloInputFeatureUMI.cpp Genome.cpp ReadAlign_outputTranscriptCIGARp.cpp ErrorWarning.cpp SoloBarcode.cpp ChimericAlign.cpp ChimericAlign_chimericJunctionOutput.cpp TimeFunctions.cpp stitchGapIndel.cpp genomeSAindex.cpp ReadAlign_calcCIGAR.cpp sjdbLoadFromStream.cpp Parameters_closeReadsFiles.cpp Genome_genomeOutLoad.cpp ParametersGenome.cpp Transcript_convertGenomeCigar.cpp SoloRead_record.cpp outputSJ.cpp SoloFeature_countCBgeneUMI.cpp ReadAlignChunk_mapChunk.cpp ThreadControl.cpp SequenceFuns.cpp SoloFeature_addBAMtags.cpp ReadAlign_createExtendWindowsWithAlign.cpp ReadAlign_multMapSelect.cpp ClipMate_clipChunk.cpp SoloFeature_countVelocyto.cpp SoloReadFeature.cpp ReadAlign_chimericDetection.cpp ReadAlign_outputTranscriptSJ.cpp SoloFeature_redistributeReadsByCB.cpp ReadAlign.cpp ReadAlign_assignAlignToWindow.cpp BAMbinSortUnmapped.cpp ChimericDetection.cpp GlobalVariables.cpp twoPassRunPass1.cpp Transcriptome_geneCountsAddAlign.cpp ReadAlign_mappedFilter.cpp sysRemoveDir.cpp bamRemoveDuplicates.cpp ReadAlign_stitchWindowSeeds.cpp ReadAlign_oneRead.cpp ChimericAlign_chimericBAMoutput.cpp SoloReadBarcode_getCBandUMI.cpp Transcript_variationOutput.cpp ParametersSolo.cpp Transcript_alignScore.cpp GTF_superTranscript.cpp SoloFeature_collapseUMIall_multiMappers.cpp OutSJ.cpp blocksOverlap.cpp ReadAlign_quantTranscriptome.cpp SoloFeature_cellFiltering.cpp Chain.cpp SoloFeature_quantTranscript.cpp ClipCR4.cpp bam_cat.c
+Genome_transformGenome.cpp Parameters_readSAMheader.cpp ReadAlign_mapOneRead.cpp readLoad.cpp ReadAlign_mapOneReadSpliceGraph.cpp ChimericDetection_chimericDetectionMult.cpp sjdbPrepare.cpp ChimericSegment.cpp Transcriptome_classifyAlign.cpp ReadAlign_stitchPieces.cpp funCompareUintAndSuffixes.cpp SoloFeature_sumThreads.cpp SoloFeature.cpp SoloBarcode_extractBarcode.cpp BAMbinSortByCoordinate.cpp Transcriptome_quantAlign.cpp ReadAlign_alignBAM.cpp GTF_transcriptGeneSJ.cpp SoloFeature_processRecords.cpp SpliceGraph_swTraceBack.cpp Transcriptome.cpp PackedArray.cpp SoloFeature_emptyDrops_CR.cpp Stats.cpp Transcript_generateCigarP.cpp SoloReadFeature_record.cpp Transcript_transformGenome.cpp Parameters_openReadsFiles.cpp Quantifications.cpp ReadAlignChunk.cpp stitchAlignToTranscript.cpp ChimericAlign_chimericStitching.cpp signalFromBAM.cpp sjAlignSplit.cpp SoloFeature_statsOutput.cpp Genome_genomeLoad.cpp stitchWindowAligns.cpp ParametersChimeric_initialize.cpp BAMfunctions.cpp ReadAlign_maxMappableLength2strands.cpp SoloFeature_countSmartSeq.cpp serviceFuns.cpp ReadAlign_chimericDetectionOld.cpp Genome_insertSequences.cpp ReadAlign_chimericDetectionPEmerged.cpp insertSeqSA.cpp Transcriptome_geneFullAlignOverlap.cpp streamFuns.cpp ReadAlignChunk_processChunks.cpp BAMoutput.cpp SpliceGraph_findSuperTr.cpp GTF.cpp SoloReadBarcode.cpp ReadAlign_CIGAR.cpp Parameters_readFilesInit.cpp ReadAlign_outputVariation.cpp funCompareUintAndSuffixesMemcmp.cpp samHeaders.cpp ReadAlign_chimericDetectionOldOutput.cpp mapThreadsSpawn.cpp SuperTranscriptome.cpp InOutStreams.cpp stringSubstituteAll.cpp Parameters_samAttributes.cpp ReadAlign_storeAligns.cpp ReadAlign_waspMap.cpp Genome_genomeGenerate.cpp SharedMemory.cpp ParametersClip_initialize.cpp Transcript.cpp ClipMate_initialize.cpp SoloFeature_collapseUMIall.cpp extendAlign.cpp ReadAlign_transformGenome.cpp sjdbLoadFromFiles.cpp genomeScanFastaFiles.cpp sjdbBuildIndex.cpp SpliceGraph_swScoreSpliced.cpp Variation.cpp ReadAlign_outputTranscriptSAM.cpp SoloFeature_loadRawMatrix.cpp binarySearch2.cpp sjdbInsertJunctions.cpp Transcript_variationAdjust.cpp ReadAlign_peOverlapMergeMap.cpp genomeParametersWrite.cpp Parameters.cpp SoloFeature_collapseUMI_Graph.cpp SoloReadFeature_inputRecords.cpp ClipMate_clip.cpp ReadAlign_outputSpliceGraphSAM.cpp STAR.cpp bamSortByCoordinate.cpp SuffixArrayFuns.cpp Solo.cpp ReadAlign_outputAlignments.cpp SpliceGraph.cpp SoloFeature_outputResults.cpp SoloRead.cpp soloInputFeatureUMI.cpp Genome.cpp ReadAlign_outputTranscriptCIGARp.cpp ErrorWarning.cpp SoloBarcode.cpp ChimericAlign.cpp ChimericAlign_chimericJunctionOutput.cpp TimeFunctions.cpp stitchGapIndel.cpp genomeSAindex.cpp ReadAlign_calcCIGAR.cpp sjdbLoadFromStream.cpp Parameters_closeReadsFiles.cpp Genome_genomeOutLoad.cpp ParametersGenome.cpp Transcript_convertGenomeCigar.cpp SoloRead_record.cpp outputSJ.cpp SoloFeature_countCBgeneUMI.cpp ReadAlignChunk_mapChunk.cpp ThreadControl.cpp SequenceFuns.cpp SoloFeature_addBAMtags.cpp ReadAlign_createExtendWindowsWithAlign.cpp ReadAlign_multMapSelect.cpp ClipMate_clipChunk.cpp SoloFeature_countVelocyto.cpp SoloReadFeature.cpp ReadAlign_chimericDetection.cpp ReadAlign_outputTranscriptSJ.cpp SoloFeature_redistributeReadsByCB.cpp ReadAlign.cpp ReadAlign_assignAlignToWindow.cpp BAMbinSortUnmapped.cpp ChimericDetection.cpp GlobalVariables.cpp twoPassRunPass1.cpp Transcriptome_geneCountsAddAlign.cpp ReadAlign_mappedFilter.cpp sysRemoveDir.cpp bamRemoveDuplicates.cpp ReadAlign_stitchWindowSeeds.cpp ReadAlign_oneRead.cpp ChimericAlign_chimericBAMoutput.cpp SoloReadBarcode_getCBandUMI.cpp Transcript_variationOutput.cpp ParametersSolo.cpp Transcript_alignScore.cpp GTF_superTranscript.cpp SoloFeature_collapseUMIall_multiMappers.cpp OutSJ.cpp blocksOverlap.cpp ReadAlign_quantTranscriptome.cpp SoloFeature_cellFiltering.cpp Chain.cpp SoloFeature_quantTranscript.cpp ClipCR4.cpp bam_cat.c
+'rm' -f ./Depend.list
+g++ -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:32+02:00 :/home/bea/STAR-2.7.9a/source"' -MM Genome_transformGenome.cpp Parameters_readSAMheader.cpp ReadAlign_mapOneRead.cpp readLoad.cpp ReadAlign_mapOneReadSpliceGraph.cpp ChimericDetection_chimericDetectionMult.cpp sjdbPrepare.cpp ChimericSegment.cpp Transcriptome_classifyAlign.cpp ReadAlign_stitchPieces.cpp funCompareUintAndSuffixes.cpp SoloFeature_sumThreads.cpp SoloFeature.cpp SoloBarcode_extractBarcode.cpp BAMbinSortByCoordinate.cpp Transcriptome_quantAlign.cpp ReadAlign_alignBAM.cpp GTF_transcriptGeneSJ.cpp SoloFeature_processRecords.cpp SpliceGraph_swTraceBack.cpp Transcriptome.cpp PackedArray.cpp SoloFeature_emptyDrops_CR.cpp Stats.cpp Transcript_generateCigarP.cpp SoloReadFeature_record.cpp Transcript_transformGenome.cpp Parameters_openReadsFiles.cpp Quantifications.cpp ReadAlignChunk.cpp stitchAlignToTranscript.cpp ChimericAlign_chimericStitching.cpp signalFromBAM.cpp sjAlignSplit.cpp SoloFeature_statsOutput.cpp Genome_genomeLoad.cpp stitchWindowAligns.cpp ParametersChimeric_initialize.cpp BAMfunctions.cpp ReadAlign_maxMappableLength2strands.cpp SoloFeature_countSmartSeq.cpp serviceFuns.cpp ReadAlign_chimericDetectionOld.cpp Genome_insertSequences.cpp ReadAlign_chimericDetectionPEmerged.cpp insertSeqSA.cpp Transcriptome_geneFullAlignOverlap.cpp streamFuns.cpp ReadAlignChunk_processChunks.cpp BAMoutput.cpp SpliceGraph_findSuperTr.cpp GTF.cpp SoloReadBarcode.cpp ReadAlign_CIGAR.cpp Parameters_readFilesInit.cpp ReadAlign_outputVariation.cpp funCompareUintAndSuffixesMemcmp.cpp samHeaders.cpp ReadAlign_chimericDetectionOldOutput.cpp mapThreadsSpawn.cpp SuperTranscriptome.cpp InOutStreams.cpp stringSubstituteAll.cpp Parameters_samAttributes.cpp ReadAlign_storeAligns.cpp ReadAlign_waspMap.cpp Genome_genomeGenerate.cpp SharedMemory.cpp ParametersClip_initialize.cpp Transcript.cpp ClipMate_initialize.cpp SoloFeature_collapseUMIall.cpp extendAlign.cpp ReadAlign_transformGenome.cpp sjdbLoadFromFiles.cpp genomeScanFastaFiles.cpp sjdbBuildIndex.cpp SpliceGraph_swScoreSpliced.cpp Variation.cpp ReadAlign_outputTranscriptSAM.cpp SoloFeature_loadRawMatrix.cpp binarySearch2.cpp sjdbInsertJunctions.cpp Transcript_variationAdjust.cpp ReadAlign_peOverlapMergeMap.cpp genomeParametersWrite.cpp Parameters.cpp SoloFeature_collapseUMI_Graph.cpp SoloReadFeature_inputRecords.cpp ClipMate_clip.cpp ReadAlign_outputSpliceGraphSAM.cpp STAR.cpp bamSortByCoordinate.cpp SuffixArrayFuns.cpp Solo.cpp ReadAlign_outputAlignments.cpp SpliceGraph.cpp SoloFeature_outputResults.cpp SoloRead.cpp soloInputFeatureUMI.cpp Genome.cpp ReadAlign_outputTranscriptCIGARp.cpp ErrorWarning.cpp SoloBarcode.cpp ChimericAlign.cpp ChimericAlign_chimericJunctionOutput.cpp TimeFunctions.cpp stitchGapIndel.cpp genomeSAindex.cpp ReadAlign_calcCIGAR.cpp sjdbLoadFromStream.cpp Parameters_closeReadsFiles.cpp Genome_genomeOutLoad.cpp ParametersGenome.cpp Transcript_convertGenomeCigar.cpp SoloRead_record.cpp outputSJ.cpp SoloFeature_countCBgeneUMI.cpp ReadAlignChunk_mapChunk.cpp ThreadControl.cpp SequenceFuns.cpp SoloFeature_addBAMtags.cpp ReadAlign_createExtendWindowsWithAlign.cpp ReadAlign_multMapSelect.cpp ClipMate_clipChunk.cpp SoloFeature_countVelocyto.cpp SoloReadFeature.cpp ReadAlign_chimericDetection.cpp ReadAlign_outputTranscriptSJ.cpp SoloFeature_redistributeReadsByCB.cpp ReadAlign.cpp ReadAlign_assignAlignToWindow.cpp BAMbinSortUnmapped.cpp ChimericDetection.cpp GlobalVariables.cpp twoPassRunPass1.cpp Transcriptome_geneCountsAddAlign.cpp ReadAlign_mappedFilter.cpp sysRemoveDir.cpp bamRemoveDuplicates.cpp ReadAlign_stitchWindowSeeds.cpp ReadAlign_oneRead.cpp ChimericAlign_chimericBAMoutput.cpp SoloReadBarcode_getCBandUMI.cpp Transcript_variationOutput.cpp ParametersSolo.cpp Transcript_alignScore.cpp GTF_superTranscript.cpp SoloFeature_collapseUMIall_multiMappers.cpp OutSJ.cpp blocksOverlap.cpp ReadAlign_quantTranscriptome.cpp SoloFeature_cellFiltering.cpp Chain.cpp SoloFeature_quantTranscript.cpp ClipCR4.cpp bam_cat.c parametersDefault.xxd htslib >> Depend.list
+g++: warning: parametersDefault.xxd: linker input file unused because linking not done
+g++: warning: htslib: linker input file unused because linking not done
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_collapseUMI_Graph.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_collapseUMIall_multiMappers.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ParametersClip_initialize.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ClipMate_clip.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ClipCR4.cpp
+cd opal && \
+g++ -c -I./ -std=c++11   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra  -mavx2 opal.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ClipMate_clipChunk.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ClipMate_initialize.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_loadRawMatrix.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_emptyDrops_CR.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra soloInputFeatureUMI.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_countSmartSeq.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_redistributeReadsByCB.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_quantTranscript.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_sumThreads.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_countVelocyto.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_countCBgeneUMI.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcriptome_classifyAlign.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_cellFiltering.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_statsOutput.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra bamSortByCoordinate.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloBarcode.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ParametersSolo.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloRead.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloRead_record.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloReadBarcode.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloReadBarcode_getCBandUMI.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloBarcode_extractBarcode.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloReadFeature.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloReadFeature_record.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloReadFeature_inputRecords.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Solo.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_outputResults.cpp
+SoloFeature_outputResults.cpp: In member function ‘void SoloFeature::outputResults(bool, std::string)’:
+SoloFeature_outputResults.cpp:41:20: warning: ignoring return value of ‘int symlink(const char*, const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+   41 |             symlink("../../../SJ.out.tab", (outputPrefixMat+pSolo.outFileNames[1]).c_str());
+      |             ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_processRecords.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_addBAMtags.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_transformGenome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Genome_transformGenome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcript_convertGenomeCigar.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra twoPassRunPass1.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra samHeaders.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Genome_genomeLoad.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Genome_genomeOutLoad.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcript_transformGenome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_outputSpliceGraphSAM.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_mapOneReadSpliceGraph.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SpliceGraph.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SpliceGraph_swScoreSpliced.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SpliceGraph_swTraceBack.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SpliceGraph_findSuperTr.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra sjAlignSplit.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra GTF.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra GTF_transcriptGeneSJ.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra GTF_superTranscript.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SuperTranscriptome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_outputAlignments.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra STAR.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SharedMemory.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra PackedArray.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SuffixArrayFuns.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Parameters.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Parameters_samAttributes.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra InOutStreams.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SequenceFuns.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Genome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ParametersGenome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Stats.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcript.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcript_alignScore.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcript_generateCigarP.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Chain.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcript_variationAdjust.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Variation.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_waspMap.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_storeAligns.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_stitchPieces.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_multMapSelect.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_mapOneRead.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra readLoad.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlignChunk.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlignChunk_processChunks.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlignChunk_mapChunk.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra OutSJ.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra outputSJ.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra blocksOverlap.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ThreadControl.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra sysRemoveDir.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_maxMappableLength2strands.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra binarySearch2.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_outputTranscriptSAM.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_outputTranscriptSJ.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_outputTranscriptCIGARp.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_createExtendWindowsWithAlign.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_assignAlignToWindow.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_oneRead.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_stitchWindowSeeds.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_peOverlapMergeMap.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_mappedFilter.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ParametersChimeric_initialize.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_chimericDetection.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_chimericDetectionOld.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_chimericDetectionOldOutput.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ChimericDetection.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ChimericDetection_chimericDetectionMult.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_chimericDetectionPEmerged.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra stitchWindowAligns.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra extendAlign.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra stitchAlignToTranscript.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ChimericAlign_chimericJunctionOutput.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ChimericAlign_chimericBAMoutput.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ChimericAlign_chimericStitching.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Genome_genomeGenerate.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra genomeParametersWrite.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra genomeScanFastaFiles.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra genomeSAindex.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Genome_insertSequences.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra insertSeqSA.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra funCompareUintAndSuffixes.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra funCompareUintAndSuffixesMemcmp.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra TimeFunctions.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ErrorWarning.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra streamFuns.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra stringSubstituteAll.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcriptome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcriptome_quantAlign.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcriptome_geneFullAlignOverlap.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_quantTranscriptome.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Quantifications.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Transcriptome_geneCountsAddAlign.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra sjdbLoadFromFiles.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra sjdbLoadFromStream.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra sjdbPrepare.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra sjdbBuildIndex.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra sjdbInsertJunctions.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra mapThreadsSpawn.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Parameters_readFilesInit.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra Parameters_readSAMheader.cpp
+Parameters_readSAMheader.cpp: In member function ‘void Parameters::readSAMheader(std::string, std::vector<std::__cxx11::basic_string<char> >)’:
+Parameters_readSAMheader.cpp:32:15: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+   32 |         system(com1.c_str());
+      |         ~~~~~~^~~~~~~~~~~~~~
+g++ -c  -pipe -Wall -Wextra -O3 bam_cat.c
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra serviceFuns.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra BAMoutput.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra BAMfunctions.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra ReadAlign_alignBAM.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra BAMbinSortByCoordinate.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra signalFromBAM.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra bamRemoveDuplicates.cpp
+g++ -c   -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra BAMbinSortUnmapped.cpp
+g++ -o STAR  -O3 -std=c++11 -fopenmp -D'COMPILATION_TIME_PLACE="2021-10-24T13:18:53+02:00 :/home/bea/STAR-2.7.9a/source"' -pipe -Wall -Wextra SoloFeature_collapseUMI_Graph.o SoloFeature_collapseUMIall_multiMappers.o ParametersClip_initialize.o ClipMate_clip.o ClipCR4.o opal/opal.o ClipMate_clipChunk.o ClipMate_initialize.o SoloFeature_loadRawMatrix.o SoloFeature_emptyDrops_CR.o soloInputFeatureUMI.o SoloFeature_countSmartSeq.o SoloFeature_redistributeReadsByCB.o SoloFeature_quantTranscript.o SoloFeature_sumThreads.o SoloFeature_countVelocyto.o SoloFeature_countCBgeneUMI.o Transcriptome_classifyAlign.o SoloFeature_cellFiltering.o SoloFeature_statsOutput.o bamSortByCoordinate.o SoloBarcode.o ParametersSolo.o SoloRead.o SoloRead_record.o SoloReadBarcode.o SoloReadBarcode_getCBandUMI.o SoloBarcode_extractBarcode.o SoloReadFeature.o SoloReadFeature_record.o SoloReadFeature_inputRecords.o Solo.o SoloFeature.o SoloFeature_outputResults.o SoloFeature_processRecords.o SoloFeature_addBAMtags.o ReadAlign_transformGenome.o Genome_transformGenome.o Transcript_convertGenomeCigar.o twoPassRunPass1.o samHeaders.o Genome_genomeLoad.o Genome_genomeOutLoad.o Transcript_transformGenome.o ReadAlign_outputSpliceGraphSAM.o ReadAlign_mapOneReadSpliceGraph.o SpliceGraph.o SpliceGraph_swScoreSpliced.o SpliceGraph_swTraceBack.o SpliceGraph_findSuperTr.o sjAlignSplit.o GTF.o GTF_transcriptGeneSJ.o GTF_superTranscript.o SuperTranscriptome.o ReadAlign_outputAlignments.o ReadAlign.o STAR.o SharedMemory.o PackedArray.o SuffixArrayFuns.o Parameters.o Parameters_samAttributes.o InOutStreams.o SequenceFuns.o Genome.o ParametersGenome.o Stats.o Transcript.o Transcript_alignScore.o Transcript_generateCigarP.o Chain.o Transcript_variationAdjust.o Variation.o ReadAlign_waspMap.o ReadAlign_storeAligns.o ReadAlign_stitchPieces.o ReadAlign_multMapSelect.o ReadAlign_mapOneRead.o readLoad.o ReadAlignChunk.o ReadAlignChunk_processChunks.o ReadAlignChunk_mapChunk.o OutSJ.o outputSJ.o blocksOverlap.o ThreadControl.o sysRemoveDir.o ReadAlign_maxMappableLength2strands.o binarySearch2.o ReadAlign_outputTranscriptSAM.o ReadAlign_outputTranscriptSJ.o ReadAlign_outputTranscriptCIGARp.o ReadAlign_calcCIGAR.cpp ReadAlign_createExtendWindowsWithAlign.o ReadAlign_assignAlignToWindow.o ReadAlign_oneRead.o ReadAlign_stitchWindowSeeds.o ReadAlign_peOverlapMergeMap.o ReadAlign_mappedFilter.o ParametersChimeric_initialize.o ReadAlign_chimericDetection.o ReadAlign_chimericDetectionOld.o ReadAlign_chimericDetectionOldOutput.o ChimericDetection.o ChimericDetection_chimericDetectionMult.o ReadAlign_chimericDetectionPEmerged.o stitchWindowAligns.o extendAlign.o stitchAlignToTranscript.o ChimericSegment.cpp ChimericAlign.cpp ChimericAlign_chimericJunctionOutput.o ChimericAlign_chimericBAMoutput.o ChimericAlign_chimericStitching.o Genome_genomeGenerate.o genomeParametersWrite.o genomeScanFastaFiles.o genomeSAindex.o Genome_insertSequences.o insertSeqSA.o funCompareUintAndSuffixes.o funCompareUintAndSuffixesMemcmp.o TimeFunctions.o ErrorWarning.o streamFuns.o stringSubstituteAll.o Transcriptome.o Transcriptome_quantAlign.o Transcriptome_geneFullAlignOverlap.o ReadAlign_quantTranscriptome.o Quantifications.o Transcriptome_geneCountsAddAlign.o sjdbLoadFromFiles.o sjdbLoadFromStream.o sjdbPrepare.o sjdbBuildIndex.o sjdbInsertJunctions.o mapThreadsSpawn.o Parameters_readFilesInit.o Parameters_openReadsFiles.cpp Parameters_closeReadsFiles.cpp Parameters_readSAMheader.o bam_cat.o serviceFuns.o GlobalVariables.cpp BAMoutput.o BAMfunctions.o ReadAlign_alignBAM.o BAMbinSortByCoordinate.o signalFromBAM.o bamRemoveDuplicates.o BAMbinSortUnmapped.o  -pthread -Lhtslib -Bstatic -lhts -Bdynamic -lz
+Parameters_openReadsFiles.cpp: In member function ‘void Parameters::openReadsFiles()’:
+Parameters_openReadsFiles.cpp:52:23: warning: ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
+   52 |                 system(("ls -lL " + readFilesNames[imate][ifile] + " > "+ outFileTmp+"/readFilesIn.info 2>&1").c_str());
+      |                 ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Parameters_openReadsFiles.cpp:25:20: warning: variable ‘imate’ might be clobbered by ‘longjmp’ or ‘vfork’ [-Wclobbered]
+   25 |          for (uint imate=0;imate<readFilesNames.size();imate++) {//open readIn files
+      |                    ^~~~~
+
+# Pruebo si se ha instalado bien
+bea@mejora:~/STAR-2.7.9a/source$ cd --
+bea@mejora:~$ STAR -h
+
+No se ha encontrado la orden «STAR», pero se puede instalar con:
+
+apt install rna-star
+Pregunte al administrador.
+bea@mejora:~$ STAR
+
+No se ha encontrado la orden «STAR», pero se puede instalar con:
+
+apt install rna-star
+Pregunte al administrador.
+
+# Pruebo a instalarlo con apt install
+bea@mejora:~$ apt install STAR
+[sudo] contraseña para bea:
+Disculpe, el usuario bea no está autorizado para ejecutar «/usr/bin/apt install STAR» como root en mejora
+
+# Sale bien así
+bea@mejora:~$ STAR-2.7.9a/bin/Linux_x86_64/STAR -h
