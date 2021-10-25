@@ -1,4 +1,6 @@
-# Descargo STAR
+# En este archivo se describen los pasos seguidos en la instalación de la herramienta STAR que nos va a permitir alinear los archivos brutos obtenidos de el análisis de RNAseq
+
+# Lo primero que tengo que hace es descargar STAR
 
 bea@mejora:~$ wget https://github.com/alexdobin/STAR/archive/2.7.9a.tar.gz
 --2021-10-24 13:17:58--  https://github.com/alexdobin/STAR/archive/2.7.9a.tar.gz
@@ -17,6 +19,7 @@ Guardando como: “2.7.9a.tar.gz”
 
 2021-10-24 13:18:00 (7,10 MB/s) - “2.7.9a.tar.gz” guardado [10669338]
 
+# Descomprimo el archivo 2.7.9a.tar.gz que acabamos de descargar
 bea@mejora:~$ tar -xzf 2.7.9a.tar.gz
 bea@mejora:~$ cd STAR-2.7.9a
 
