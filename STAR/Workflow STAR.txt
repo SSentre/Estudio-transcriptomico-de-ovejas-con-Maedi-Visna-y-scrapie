@@ -46,5 +46,5 @@ Ha salido bien!!
 # Creo un directorio nuevo en el que se van a guardar todos los resultados que vamos a ir obteniendo con STAR
 mkdir -p STAR_results
 
-# Mapeo las reads con el siguiente comando, hay que tener en cuenta que para tener archivos .bam, la información de los unmapped y los counts hay que utilizar el siguiente comando:
-STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --genomeDir ./OvisAries_index --readFilesIn ./fastq/MS1_filtered.fastq_1.fastq ./fastq/MS1_filtered.fastq_2.fastq --outFileNamePrefix ./STAR_results/MS1_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --quantMode GeneCounts 
+# Ahora voy a mapear las reads teniendo en cuenta que quiero obtener archivos .bam, la información de los unmapped, los counts e identificar los multimappers y los duplicate unique mappers. Por lo tanto hay que utilizar el siguiente comando:
+STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --genomeDir ./OvisAries_index --readFilesIn ./fastq/MS1_filtered.fastq_1.fastq ./fastq/MS1_filtered.fastq_2.fastq --outFileNamePrefix ./STAR_results/MS1_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --quantMode GeneCounts --bamRemoveDuplicatesType UniqueIdentical
