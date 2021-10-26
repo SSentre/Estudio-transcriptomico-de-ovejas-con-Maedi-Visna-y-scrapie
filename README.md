@@ -1,1 +1,1 @@
-# Estudio-transcript-mico-de-ovejas-con-Maedi-Visna-y-scrapie
+# Estudio transcriptomico de ovejas con Maedi-Visna y scrapie
