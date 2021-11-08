@@ -14,8 +14,11 @@ samtools fastq Tophat/MS1/unmapped_MS1_sorted.bam -1 fastq/MS1_unmapped1.fq.gz -
 gzip -d fastq/MS1_unmapped1.fq.gz
 gzip -d fastq/MS1_unmapped2.fq.gz
 
-# Hago un bowtie con el genoma de Maedi-Visna
-bowtie2 -f -x Maedi_Genome -q -1 fastq/MS1_unmapped1.fq -2 fastq/MS1_unmapped2.fq --fr -X 500 -I 40 --local -S bam/MS1_unmapped_bowtie2.sam
+# Para iniciar el alineamiento con Bowtie2 necesito crear el índice del genoma:
+bowtie2-build ./GCF_000849025.1_ViralProj14636_genomic.fna MaediVisna_Genome
+
+# Hago el alineamiento con el genoma de Maedi-Visna:
+bowtie2 -f -x MaediVisna_Genome -q -1 fastq/MS1_unmapped1.fq -2 fastq/MS1_unmapped2.fq --fr -X 500 -I 40 --local -S bam/MS1_unmapped_bowtie2.sam
 11678471 reads; of these:
   11678471 (100.00%) were paired; of these:
     11678414 (100.00%) aligned concordantly 0 times
