@@ -1,0 +1,62 @@
+# Las reads se encuentran comprimidas en dos archivos, hay que descomprimirlos:
+gzip -d MS1_1.fq.gz
+gzip -d MS1_2.fq.gz
+
+# Utilizamos PRINSEQ-lite para filtrar los datos brutos y realizar el control de calidad
+perl prinseq-lite.pl -fastq MS1_1.fq -fastq2 MS1_2.fq -min_len 100 -ns_max_p 10 -trim_ns_left 1 -trim_ns_right 1 -ns_max_p 10 -trim_qual_right 30 -out_bad null -out_format 3 -out_good MS1_filtered.fastq
+
+Input and filter stats:
+        Input sequences (file 1): 42,003,369
+        Input bases (file 1): 6,300,505,350
+        Input mean length (file 1): 150.00
+        Input sequences (file 2): 42,003,369
+        Input bases (file 2): 6,300,505,350
+        Input mean length (file 2): 150.00
+        Good sequences (pairs): 41,863,785
+        Good bases (pairs): 12,559,129,245
+        Good mean length (pairs): 300.00
+        Good sequences (singletons file 1): 65,417 (0.16%)
+        Good bases (singletons file 1): 9,812,525
+        Good mean length (singletons file 1): 150.00
+        Good sequences (singletons file 2): 66,058 (0.16%)
+        Good bases (singletons file 2): 9,908,455
+        Good mean length (singletons file 2): 150.00
+        Bad sequences (file 1): 74,167 (0.18%)
+        Bad bases (file 1): 11,125,050
+        Bad mean length (file 1): 150.00
+        Bad sequences (file 2): 65,417 (0.16%)
+        Bad bases (file 2): 9,812,550
+        Bad mean length (file 2): 150.00
+        Sequences filtered by specified parameters:
+        trim_qual_right: 11
+        min_len: 134717
+        ns_max_p: 12965
+
+# Ahora voy a empezar a alinear contra el genoma de referencia de oveja para obtener los bam, utilizo TopHat2.
+1. Creo el índice del genoma y del transcriptoma con bowtie2-build:
+bowtie2-build Ovis_aries.fa Genome
+bowtie2-build OvisAries_Ramb_v2.0_rna.fna Transcriptome
+
+2. El alineamiento con TopHat2 requiere genoma de referencia, transcriptoma de ese genoma y el gff.
+# Descargo el archivo GFF y lo descomprimo:
+gzip -d GCF_016772045.1_ARS-UI_Ramb_v2.0_genomic.gff.gz
+
+# Realizo el alineamiento:
+tophat-2.1.1.Linux_x86_64/tophat2 -o ./Tophat/MS1 --read-mismatches 2 --read-gap-length 3 --read-edit-dist 3 --GTF ./GCF_016772045.1_ARS-UI_Ramb_v2.0_genomic.gff --transcriptome-index=./Transcriptome ./Genome ./fastq/MS1_filtered.fastq_1.fastq ./fastq/MS1_filtered.fastq_2.fastq
+
+Obtengo el siguiente align summary
+Left reads:
+          Input     :  41863785
+           Mapped   :  26767839 (63.9% of input)
+            of these:   1312591 ( 4.9%) have multiple alignments (71132 have >20)
+Right reads:
+          Input     :  41863785
+           Mapped   :  26597506 (63.5% of input)
+            of these:   1326303 ( 5.0%) have multiple alignments (71132 have >20)
+63.7% overall read mapping rate.
+
+Aligned pairs:  23180031
+     of these:    957913 ( 4.1%) have multiple alignments
+                  507551 ( 2.2%) are discordant alignments
+54.2% concordant pair alignment rate.
+
