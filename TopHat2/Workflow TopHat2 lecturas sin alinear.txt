@@ -1,0 +1,36 @@
+# Una vez tengo el resultado de TopHat2 alineo los unmapped, primero hay que convertir los .bam unmapped en .fastq para poder alinear con el genoma de maedi, para ello hay que ordenar los unmapped.bam con sort de samtools.
+samtools sort -n Tophat/MS1/unmapped.bam -o Tophat/MS1/unmapped_MS1_sorted.bam 
+
+# Pruebo según esta página https://www.metagenomics.wiki/tools/samtools/converting-bam-to-fastq a convertir los bam en fastq y según el manual http://www.htslib.org/doc/samtools-fasta.html
+
+# Genera ficheros con extensión .gz
+samtools fastq Tophat/MS1/unmapped_MS1_sorted.bam -1 fastq/MS1_unmapped1.fq.gz -2 fastq/MS1_unmapped2.fq.gz -0 /dev/null -s /dev/null -n   
+
+# Obtengo:
+[M::bam2fq_mainloop] discarded 7005283 singletons
+[M::bam2fq_mainloop] processed 30362225 reads
+
+# Descomprimo los ficheros:
+gzip -d fastq/MS1_unmapped1.fq.gz
+gzip -d fastq/MS1_unmapped2.fq.gz
+
+# Hago un bowtie con el genoma de Maedi-Visna
+bowtie2 -f -x Maedi_Genome -q -1 fastq/MS1_unmapped1.fq -2 fastq/MS1_unmapped2.fq --fr -X 500 -I 40 --local -S bam/MS1_unmapped_bowtie2.sam
+11678471 reads; of these:
+  11678471 (100.00%) were paired; of these:
+    11678414 (100.00%) aligned concordantly 0 times
+    57 (0.00%) aligned concordantly exactly 1 time
+    0 (0.00%) aligned concordantly >1 times
+    ----
+    11678414 pairs aligned concordantly 0 times; of these:
+      0 (0.00%) aligned discordantly 1 time
+    ----
+    11678414 pairs aligned 0 times concordantly or discordantly; of these:
+      23356828 mates make up the pairs; of these:
+        23356787 (100.00%) aligned 0 times
+        28 (0.00%) aligned exactly 1 time
+        13 (0.00%) aligned >1 times
+0.00% overall alignment rate
+
+
+:(
