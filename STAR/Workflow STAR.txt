@@ -48,3 +48,19 @@ mkdir -p STAR_results
 
 # Ahora voy a mapear las reads teniendo en cuenta que quiero obtener archivos .bam, la información de los unmapped, los counts e identificar los multimappers y los duplicate unique mappers. Por lo tanto hay que utilizar el siguiente comando:
 STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --genomeDir ./OvisAries_index --readFilesIn ./fastq/MS1_filtered.fastq_1.fastq ./fastq/MS1_filtered.fastq_2.fastq --outFileNamePrefix ./STAR_results/MS1_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --quantMode GeneCounts --bamRemoveDuplicatesType UniqueIdentical
+
+# Lo siguiente sería repetir este paso 2 con el resto de muestras.
+
+# Al ejecutar el comando para alinear la muestra M4 aparece el siguiente error:
+STAR-2.7.9a/bin/Linux_x86_64/STAR --runThreadN 10 --genomeDir ./OvisAries_index --readFilesIn ./fastq/M_4_filtered.fastq_1.fastq ./fastq/M_4_filtered.fastq_2.fastq --outFileNamePrefix ./STAR_results/M4_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --quantMode GeneCounts --bamRemoveDuplicatesType UniqueIdentical
+        STAR version: 2.7.9a   compiled: 2021-05-04T09:43:56-0400 vega:/home/dobin/data/STAR/STARcode/STAR.master/source
+Oct 26 23:00:07 ..... started STAR run
+Oct 26 23:00:08 ..... loading genome
+Oct 26 23:03:26 ..... started mapping
+
+EXITING because of FATAL ERROR in reads input: quality string length is not equal to sequence length
+@A00709:33:HYHCLDSXX:1:1568:3034:12446
+AGTTTCTGAAGGGCATAGGCCATTCAGCATATCCTACTCATGTGGTTAGGGCTTCCAAGGGGGCGCTAGTGGTAAAGAATCTGCCTGCCAAT
+
+SOLUTION: fix your fastq file
+
