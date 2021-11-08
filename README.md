@@ -8,4 +8,4 @@ En trabajo se inició queriendo analizar los datos de RNA-seq con la herramienta
 
 La carpeta **2. STAR** contiene los archivos con el código relevante al análisis con la herramienta STAR.
 - El archivo llamado **Workflow STAR alineamiento genoma oveja.txt** contiene los comandos necesarios para realizar el alineamiento de las muestras de estudio contra el genoma de referencia de oveja.
-- El archivo llamado
+- El archivo llamado **Workflow STAR lecturas sin alinear.txt** contiene los comandos que se han utilizado para seleccionar las lecturas no alineadas obtenidas en el paso anterior de alineamiento con STAR y el alineamiento de estas lecturas contra el genoma del lentivirus Maedi-Visna tanto con la herramienta Bowtie2 como con STAR.
