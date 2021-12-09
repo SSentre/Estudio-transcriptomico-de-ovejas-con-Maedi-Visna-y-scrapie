@@ -1,0 +1,10 @@
+sample.id	group
+C2	C
+C3	C
+C5	C
+M1	MV
+M2	MV
+M4	MV
+MS1	MS
+MS2	MS
+MS3	MS

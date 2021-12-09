@@ -1,0 +1,442 @@
+---
+title: "Análisis diferencias expresión"
+author: "Sara Sentre Domingo"
+date: "1/12/2021"
+output:
+ prettydoc::html_pretty:
+    toc: true
+    theme: cayman
+    highlight: github
+    number_sections: true
+---
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NULL)
+```
+
+# Materiales y métodos
+En este análisis de RNA-Seq nos encontramos frente a un estudio que consta de 9 muestras que se dividen en tres grupos dependiendo de si son ovejas sin patología respiratoria, si están infectadas con el lentivirus causante de Maedi-Visna y si además se han infectado con *scrapie*, cada grupo está compuesto por tres muestras.
+
+Para poder llevar a cabo el análisis de los datos de RNA-Seq generados en este estudio vamos a utilizar el software estadístico *R*, en concreto su interfaz *R-Studio*, y varios paquetes contenidos en el proyecto *Bioconductor*.
+En concreto los paquetes que hemos tenido que usar han sido los siguientes:
+```{r message=FALSE, warning=FALSE}
+library("edgeR")
+library("limma")
+library("Glimma")
+library("gplots")
+library(AnnotationHub)
+library(AnnotationDbi)
+library("RColorBrewer")
+library("GO.db")
+```
+
+# Resultados
+## Obtención y lectura de los datos
+Lo primero que tenemos que hacer para poder empezar a analizar los datos de este ensayo es crear el objeto *seqdata* que contiene información sobre los genes y el objeto *sampleinfo* que contiene la información básica de las muestras.
+
+Para crear *seqdata* tenemos que organizar la información que se obtiene de la tabla de counts generada por STAR. En esta tabla tenemos 4 columnas: en la primera está el ID del gen, en la segunda los *counts* si el análisis se hubiera realizado sin tener en cuenta el sentido de las hebras del material genético, en la tercera los *counts* de primer sentido de lectura de las hebras y en la cuarta los *counts* del segundo sentido de lectura. Como en nuestro caso el análisis de RNA-seq sí que tuvo en cuenta los sentidos de lectura vamos a utilizar los datos de *counts* de la tercera y cuarta columna y los vamos a analizar de forma independiente.
+
+Todos los procesos que se van a hacer con el conjunto de datos correspondiente a un sentido de lectura se van a replicar con el otro sentido de lectura, va a ser un análisis en paralelo.
+
+Primero vamos a crear *seqdata1* que va a tener la información relativa al primer sentido de lectura y luego vamos a crear *seqdata2* que tendrá la información del otro sentido de lectura.
+
+```{r warning=FALSE}
+C2data=read.table("C2_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+C3data=read.table("C3_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+C5data=read.table("C5_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+M1data=read.table("M1_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+M2data=read.table("M2_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+M4data=read.table("M4_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+MS1data=read.table("MS1_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+MS2data=read.table("MS2_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+MS3data=read.table("MS3_ReadsPerGene.out.tab", header=TRUE, sep="\t")
+
+sampleinfo=read.table("sampleinfo.txt",header=TRUE, sep="\t")
+
+
+seqdata1=C2data[, c(1,3)]
+names(seqdata1)[names(seqdata1)=="C2_strand1"]="C2"
+seqdata1$C3=C3data$C3_strand1
+seqdata1$C5=C5data$C5_strand1
+seqdata1$M1=M1data$M1_strand1
+seqdata1$M2=M2data$M2_strand1
+seqdata1$M4=M4data$M4_strand1
+seqdata1$MS1=MS1data$MS1_strand1
+seqdata1$MS2=MS2data$MS2_strand1
+seqdata1$MS3=MS3data$MS3_strand1
+head(seqdata1)
+dim(seqdata1)
+
+seqdata2=C2data[, c(1,4)]
+names(seqdata2)[names(seqdata2)=="C2_strand2"]="C2"
+seqdata2$C3=C3data$C3_strand2
+seqdata2$C5=C5data$C5_strand2
+seqdata2$M1=M1data$M1_strand2
+seqdata2$M2=M2data$M2_strand2
+seqdata2$M4=M4data$M4_strand2
+seqdata2$MS1=MS1data$MS1_strand2
+seqdata2$MS2=MS2data$MS2_strand2
+seqdata2$MS3=MS3data$MS3_strand2
+head(seqdata2)
+dim(seqdata2)
+```
+
+
+A continuación tenemos que reformatear los datos y crear un nuevo objeto que contenga solo el *counting* y los identificadores de los genes. Este objeto se va a llamar *countdata1* y *countdata2* respectivamente.
+
+```{r}
+countdata1=seqdata1[,-(1)]
+rownames(countdata1)=seqdata1[,1]
+colnames(countdata1)
+head(countdata1)
+
+table(colnames(countdata1)==sampleinfo$sample.id)
+
+countdata2=seqdata2[,-(1)]
+rownames(countdata2)=seqdata2[,1]
+colnames(countdata2)
+head(countdata2)
+
+table(colnames(countdata2)==sampleinfo$sample.id)
+```
+
+
+Lo siguiente que vamos a hacer es filtrar y eliminar los genes con recuentos muy bajos para eliminar posible ruido del análisis posterior.
+Este filtrado lo vamos a hacer teniendo en cuenta que vamos a retener genes que se expresen en un conteo por millón (CPM) por encima de 0.5 en dos muestras como mínimo. Vamos a utilizar los siguientes comandos para crear los valores CPM:
+
+```{r}
+myCPM1=cpm(countdata1)
+head(myCPM1)
+
+myCPM2=cpm(countdata2)
+head(myCPM2)
+```
+
+Una vez que hemos creado este archivo pasamos a filtrar los genes con la condición comentada anteriormente y quedarnos con los que nos interesan.
+
+```{r}
+thresh1=myCPM1 > 0.5
+head(thresh1)
+keep1=rowSums(thresh1) >= 2
+counts.keep1=countdata1[keep1,]
+summary(keep1)
+
+dim(counts.keep1)
+
+thresh2=myCPM2 > 0.5
+head(thresh2)
+keep2=rowSums(thresh2) >= 2
+counts.keep2=countdata2[keep2,]
+summary(keep2)
+
+dim(counts.keep2)
+```
+
+Tras todo este filtrado y selección vemos que el número de genes con el que vamos a trabajar ahora se ha reducido bastante en comparación con el número de genes con el que hemos empezado el análisis.
+
+Lo siguiente que tenemos que hacer es crear el objeto *DGEList* que necesita *edgeR* para almacenar los datos de recuento:
+```{r}
+y1=DGEList(counts.keep1)
+y1
+names(y1)
+y1$samples
+
+y2=DGEList(counts.keep2)
+y2
+names(y2)
+y2$samples
+```
+
+
+## Control de calidad
+Una vez que hemos hecho todo el tratamiento inicial de los datos pasamos al control de calidad de los mismos.
+Lo primero que vamos a hacer es crear un gráfico de barras que nos permita observar si hay diferencias importantes entre las muestras del estudio.
+
+```{r echo=FALSE}
+barplot(y1$samples$lib.size,names=colnames(y1),las=2)
+title("Barplot of library sizes 1")
+
+barplot(y2$samples$lib.size,names=colnames(y2),las=2)
+title("Barplot of library sizes 2")
+```
+
+Como los datos de recuento no se distribuyen siguiendo una distribución normal si queremos examinar esos datos tenemos que usar una escala logarítmica $log2$.
+
+```{r echo=FALSE}
+logcounts1=cpm(y1,log=TRUE)
+boxplot(logcounts1, xlab="", ylab="Log2 counts per million",las=2)
+abline(h=median(logcounts1),col="red")
+title("Boxplots of logCPMs (unnormalised) 1")
+
+logcounts2=cpm(y2,log=TRUE)
+boxplot(logcounts2, xlab="", ylab="Log2 counts per million",las=2)
+abline(h=median(logcounts2),col="red")
+title("Boxplots of logCPMs (unnormalised) 2")
+```
+
+Gracias a este gráfico vemos que las distribuciones del *countig* data son bastante variadas y diferentes entre sí, aunque se puede apreciar que las de las muestras con Maedi-Visna aparentemente son más similares entre sí. Además, la mayoría de las muestras (excepto C2) coinciden bastante con la línea roja que hemos dibujado para marcar la mediana del $logCPM$.
+
+El siguiente análisis de control de calidad que podemos hacer es un gráfico MDS que nos va a permitir visualizar la variabilidad de los datos ya que idealmente lo que tendríamos que encontrarnos sería que las causas principales de variación son los grupos de estudio y no algún otro factor.
+
+```{r include=FALSE}
+sampleinfo$group=as.factor(sampleinfo$group)
+```
+
+```{r}
+par(mfrow=c(1,2))
+col.cell=c("darkorchid3","cadetblue2","blue")[sampleinfo$group]
+data.frame(sampleinfo$group,col.cell)
+plotMDS(y1,col=col.cell,main="Sentido lectura 1")
+legend("topleft",fill=c("darkorchid3","cadetblue2","blue"),legend=c("Control", "MV-scrapie", "MV"))
+
+plotMDS(y2,col=col.cell, main="Sentido lectura 2")
+legend("topleft",fill=c("darkorchid3","cadetblue2","blue"),legend=c("Control", "MV-scrapie", "MV"))
+```
+
+Vemos que en los dos sentidos de lectura la muestra MS3 se mezcla con los controles (que se encuentran ligeramente separados entre sí pero no se mezclan con el resto de muestras de los grupos con Maedi-Visna) y que las muestras con Maedi-Visna y Maedi-Visna y *scrapie* no se separan mucho entre sí.
+
+Como último paso del control de calidad de los datos vamos a realizar un gráfico *heatmap* con clusterización que utiliza una matriz de distancias euclídeas con los datos del logCPM.
+
+```{r}
+var_genes=apply(logcounts1, 1, var)
+select_var=names(sort(var_genes, decreasing=TRUE))[1:500]
+highly_variable_lcpm=logcounts1[select_var,]
+dim(highly_variable_lcpm)
+head(highly_variable_lcpm)
+mypalette=brewer.pal(11,"RdYlBu")
+morecols=colorRampPalette(mypalette)
+col.cell=c("purple","orange","red")[sampleinfo$group]
+heatmap.2(highly_variable_lcpm,col=rev(morecols(50)),trace="none", main="Top 500 most variable genes across samples 1",ColSideColors=col.cell,scale="row")
+
+var_genes=apply(logcounts2, 1, var)
+select_var=names(sort(var_genes, decreasing=TRUE))[1:500]
+highly_variable_lcpm=logcounts2[select_var,]
+dim(highly_variable_lcpm)
+head(highly_variable_lcpm)
+mypalette=brewer.pal(11,"RdYlBu")
+morecols=colorRampPalette(mypalette)
+col.cell=c("purple","orange","red")[sampleinfo$group]
+heatmap.2(highly_variable_lcpm,col=rev(morecols(50)),trace="none", main="Top 500 most variable genes across samples 2",ColSideColors=col.cell,scale="row")
+```
+
+## Normalización
+Una vez realizado el control de calidad de los datos el siguiente paso es la normalización, también denominada TMM, que se utiliza para eliminar sesgos de composición. Mediante la normalización se crea un conjunto de factores que junto con los tamaños de la biblioteca sirven para definir el tamaño efectivo de la biblioteca.
+```{r}
+y1=calcNormFactors(y1)
+y1$samples
+
+y2=calcNormFactors(y2)
+y2$samples
+```
+
+Cuando el valor del factor de normalización sale menor de 1 significa que el tamaño de la biblioteca va a disminuir y cuando sale mayor que 1 el tamaño de la bilioteca aumentará. Por lo tanto en tres de las muestras el tamaño va a aumentar y en seis va a disminuir.
+
+Si queremos ver la diferencias entre las dos situaciones gráficamente podemos comparar las muestras C2 y C3 antes y después de llevar a cabo la normalización del sentido de lectura 1.
+
+```{r}
+par(mfrow=c(1,2))
+plotMD(logcounts1,column = 1)
+abline(h=0,col="grey")
+plotMD(logcounts1,column = 2)
+abline(h=0,col="grey")
+```
+
+```{r}
+par(mfrow=c(1,2))
+plotMD(logcounts2,column = 1)
+abline(h=0,col="grey")
+plotMD(logcounts2,column = 2)
+abline(h=0,col="grey")
+```
+
+
+## Identificación de genes diferencialmente expresados
+Para poder identificar los genes que se encuentran diferencialmente expresados en este ensayo vamos autilizar el paquete *limma*. Inicialmente tenemos que crear una matriz de diseño para los grupos a comparar.
+
+```{r}
+group=paste(sampleinfo$group,sep=".")
+group=factor(group)
+design=model.matrix(~ 0 + group)
+design
+colnames(design)=levels(group)
+design
+```
+
+Una vez que hemos crado la matriz de diseño vamos a realizar el estudio de estimación de tendencias de varianzas con respecto a la media del counting data con *voom*. La transformación que hace *voom* va a producir el objeto *Elist*.
+
+```{r}
+par(mfrow=c(1,1))
+v1=voom(y1,design,plot = TRUE)
+v1
+```
+
+```{r}
+par(mfrow=c(1,1))
+v2=voom(y2,design,plot = TRUE)
+v2
+```
+
+
+Tras usar esta herramienta podemos comparar mediante un boxplot los resultados antes y después de sufrir este proceso:
+```{r}
+par(mfrow=c(1,2))
+boxplot(logcounts1, xlab="", ylab="Log2 counts per million",las=2,main="Non normalised logCPM 1")
+abline(h=median(logcounts1),col="red")
+boxplot(v1$E, xlab="", ylab="Log2 counts per million",las=2,main="Voom transformed logCPM 1")
+abline(h=median(v1$E),col="red")
+```
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(logcounts2, xlab="", ylab="Log2 counts per million",las=2,main="Non normalised logCPM 2")
+abline(h=median(logcounts2),col="red")
+boxplot(v2$E, xlab="", ylab="Log2 counts per million",las=2,main="Voom transformed logCPM 2")
+abline(h=median(v2$E),col="red")
+```
+
+Vemos que gracias a *voom* ha aumentado la similitud entre los datos al compararlos con la situación antes de normalizar pero siguen existiendo diferencias entre ellos.
+
+Al haber obtenido los datos de la función *voom* podemos utilizar *limma* para obtener la expresión diferencial de los genes. Hay que empezar por el ajuste del modelo lineal de cada gen usando la función mostrada a continuación.
+```{r}
+fit1=lmFit(v1)
+names(fit1)
+
+fit2=lmFit(v2)
+names(fit2)
+```
+
+Para poder obtener las expresiones diferenciales tenemos que concretar entre qué grupos queremos que se hagan, por lo tanto hay que usar *makeContrasts* para especificarlo.
+```{r}
+cont.matrix1=makeContrasts(CvsMV=C - MV, CvsMS=C - MS, MVvsMS=MV - MS,levels=design)
+cont.matrix1
+fit.cont1=contrasts.fit(fit1, cont.matrix1)
+fit.cont1=eBayes(fit.cont1)
+summa.fit1=decideTests(fit.cont1)
+summary(summa.fit1)
+topTable(fit.cont1,coef="CvsMV", sort.by="p")
+topTable(fit.cont1,coef="CvsMS", sort.by="p")
+topTable(fit.cont1,coef="MVvsMS", sort.by="p")
+```
+
+Vemos que según los análisis que hemos llevado a cabo si comparamos el grupo de animales control frente a los que tienen Maedi-Visna tenemos 2735 genes con una expresión diferencial menor y 214 genes que se encuentran sobreexpresados; al comparar las muestras control con las infectadas con Maedi-Visna y *scrapie* hay 364 genes con una expresión menor y 14 sobreexpresados y al comparar los dos grupos con maedi-Visna no hay diferencias de expresión.
+
+Repetimos el proceso para el sentido de lectura 2:
+
+```{r}
+cont.matrix2=makeContrasts(CvsMV=C - MV, CvsMS=C - MS, MVvsMS=MV - MS,levels=design)
+cont.matrix2
+fit.cont2=contrasts.fit(fit2, cont.matrix2)
+fit.cont2=eBayes(fit.cont2)
+summa.fit2=decideTests(fit.cont2)
+summary(summa.fit2)
+topTable(fit.cont2,coef="CvsMV", sort.by="p")
+topTable(fit.cont2,coef="CvsMS", sort.by="p")
+topTable(fit.cont2,coef="MVvsMS", sort.by="p")
+```
+
+Los resultados que visualizamos son muy similares a los obtenidos en el sentido de lectura 1. Los dos grupos infectados con MV no presentan diferencias significativas de expresión, al comparar el grupo control con el grupo con MV hay 2736 genes con un descenso en su expresión y 206 genes sobreexpresados; por último si comparamos el grupo control con el grupo con MV y *scrapie* hay 368 genes con una menor expresión y 16 sobreexpresados.
+
+## Anotación de los resultados
+Para poder extraer más información de la lista de genes obtenida anteriormente vamos a crear un nuevo data.frame con nueva información como puede ser el nombre completo del gen o su símbolo. Vamos a tener que utilizar el paquete *AnnotationHub* que contiene un objeto *OrgDb* preconfigurado con la información genética de la oveja basada en NCBI Gene IDs.
+
+```{r}
+ah=AnnotationHub()
+query(ah, c("Ovis aries", "OrgDb"))
+```
+
+Una vez que sabemos cómo se llama el objeto con la información relativa a la anotación de la oveja creamos la base de datos que va a recoger esa información y la llamamos *org.Oa.eg.db*.
+```{r message=FALSE}
+org.Oa.eg.db=ah[["AH85595"]]
+```
+
+Para poder saber exactamente qué información de anotación del genoma tenemos y de qué identificadores disponemos vamos a visualizar las columnas y palabras claves de la base de datos que acabamos de crear.
+```{r}
+columns(org.Oa.eg.db)
+keytypes(org.Oa.eg.db)
+```
+
+A continuación vamos a crear un data.frame que va a contener información como puede ser el nombre completo del gen, su símbolo o su código de gene ontology (GO): 
+
+```{r}
+ann1=select(org.Oa.eg.db, keys=rownames(fit.cont1), columns=c("ENTREZID","SYMBOL","GO","GENENAME","ACCNUM"), keytype="SYMBOL")
+head(ann1)
+```
+
+Además, al ejecutar el comando *topTable* la información de la anotación ya saldrá en el output.
+```{r}
+fit.cont1$genes=ann1
+topTable(fit.cont1,coef="CvsMV",sort.by="p")
+topTable(fit.cont1,coef="CvsMS",sort.by="p")
+topTable(fit.cont1,coef="MVvsMS",sort.by="p")
+```
+
+Si repetimos la creación de este data.frame con los datos del otro sentido de lectura obtenemos:
+
+```{r}
+ann2=select(org.Oa.eg.db, keys=rownames(fit.cont1), columns=c("ENTREZID","SYMBOL","GO","GENENAME","ACCNUM"), keytype="SYMBOL")
+head(ann2)
+
+fit.cont2$genes=ann2
+topTable(fit.cont2,coef="CvsMV",sort.by="p")
+topTable(fit.cont2,coef="CvsMS",sort.by="p")
+topTable(fit.cont2,coef="MVvsMS",sort.by="p")
+```
+
+
+Ahora vamos a crear un volcano plot en el que veamos los genes con expresiones más diferenciales. Empezamos creando los del sentido de lectura 1 para cada una de las comparaciones entre grupos:
+```{r}
+par(mfrow=c(1,2))
+plotMD(fit.cont1,coef=1,status=summa.fit1[,"CvsMV"], values = c(-1, 1))
+volcanoplot(fit.cont1,coef=1,highlight=20,names=fit.cont1$genes$SYMBOL)
+```
+
+```{r}
+par(mfrow=c(1,2))
+plotMD(fit.cont1,coef=2,status=summa.fit1[,"CvsMS"], values = c(-1, 1))
+volcanoplot(fit.cont1,coef=2,highlight=20,names=fit.cont1$genes$SYMBOL)
+```
+
+```{r}
+par(mfrow=c(1,2))
+plotMD(fit.cont1,coef=3,status=summa.fit1[,"MVvsMS"], values = c(-1, 1))
+volcanoplot(fit.cont1,coef=3,highlight=20,names=fit.cont1$genes$SYMBOL)
+```
+
+Finalmente repetimos la creación de estos volcano plot pero para los datos analizados correspondientes al otro sentido de lectura:
+```{r}
+par(mfrow=c(1,2))
+plotMD(fit.cont2,coef=1,status=summa.fit2[,"CvsMV"], values = c(-1, 1))
+volcanoplot(fit.cont2,coef=1,highlight=20,names=fit.cont2$genes$SYMBOL)
+```
+
+```{r}
+par(mfrow=c(1,2))
+plotMD(fit.cont2,coef=2,status=summa.fit2[,"CvsMS"], values = c(-1, 1))
+volcanoplot(fit.cont2,coef=2,highlight=20,names=fit.cont2$genes$SYMBOL)
+```
+
+```{r}
+par(mfrow=c(1,2))
+plotMD(fit.cont2,coef=3,status=summa.fit2[,"MVvsMS"], values = c(-1, 1))
+volcanoplot(fit.cont2,coef=3,highlight=20,names=fit.cont2$genes$SYMBOL)
+```
+
+Como en los pasos anteriores vemos que lo obtenido al analizar los dos sentidos de lectura es muy similar (como era de esperar) y vemos gráficamente lo que ya podíamos intuir con los datos de diferencias de expresión conseguidos con las matrices de contrastes. En resumen, las mayores diferencias de expresión se encuentran entre el grupo de ovejas control y el grupo de ovejas infectadas con MV seguidas por la comparativa entre el grupo control y el de ovejas con MV y *scrapie*. En estas dos comparativas es superior el número de genes que tiene una expresión significativamente menor que el número de genes sobreexpresados por lo que parece que cuando las ovejas se infectan con MV se alteran algunas funciones (que veremos posteriormente en el análisis de significación biológica) bajando los niveles de expresión génica.
+
+## Análisis de significación biológica
+
+El siguiente paso en nuestro análisis es realizar un análisis de gene ontology (GO) con la siguiente función:
+```{r eval=FALSE, include=FALSE}
+gn=unique(sample(keys(org.Oa.eg.db, "ENTREZID"), 4))
+gg1=makeGOGraph(gn, "mf")
+```
+
+
+```{r eval=FALSE, include=FALSE}
+basicProfile(genelist=fit.cont1, idType="GoTermsFrame", onto ="ANY", level=2, orgPackage=NULL)
+```
+
