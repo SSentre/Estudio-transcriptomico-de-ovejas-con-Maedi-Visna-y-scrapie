@@ -2,12 +2,7 @@
 title: "Análisis diferencias expresión"
 author: "Sara Sentre Domingo"
 date: "1/12/2021"
-output:
- prettydoc::html_pretty:
-    toc: true
-    theme: cayman
-    highlight: github
-    number_sections: true
+output: pdf_document
 ---
 <style>
 body {
@@ -427,16 +422,31 @@ volcanoplot(fit.cont2,coef=3,highlight=20,names=fit.cont2$genes$SYMBOL)
 
 Como en los pasos anteriores vemos que lo obtenido al analizar los dos sentidos de lectura es muy similar (como era de esperar) y vemos gráficamente lo que ya podíamos intuir con los datos de diferencias de expresión conseguidos con las matrices de contrastes. En resumen, las mayores diferencias de expresión se encuentran entre el grupo de ovejas control y el grupo de ovejas infectadas con MV seguidas por la comparativa entre el grupo control y el de ovejas con MV y *scrapie*. En estas dos comparativas es superior el número de genes que tiene una expresión significativamente menor que el número de genes sobreexpresados por lo que parece que cuando las ovejas se infectan con MV se alteran algunas funciones (que veremos posteriormente en el análisis de significación biológica) bajando los niveles de expresión génica.
 
+
+
 ## Análisis de significación biológica
 
-El siguiente paso en nuestro análisis es realizar un análisis de gene ontology (GO) con la siguiente función:
-```{r eval=FALSE, include=FALSE}
-gn=unique(sample(keys(org.Oa.eg.db, "ENTREZID"), 4))
-gg1=makeGOGraph(gn, "mf")
-```
+El siguiente paso en nuestro análisis es realizar un análisis de significación biológica, lo vamos a hacer con la herramienta web *Enrichr* por lo que necesitamos exportar los resultados que hemos obtenido. Vamos a exportarlos a archivos csv teniendo en cuenta el p valor y ordenándolos en relación a *loFC* para diferenciar los genes sobreexpresados y los que tienen una menor expresión génica. 
 
+```{r}
+# Seleccionamos la información referente a la comparación CvsMV del primer sentido de lectura
+res.coef1_1=topTable(fit.cont1, coef=1, number=2949, sort.by="p", resort.by="logFC")
+res.coef1_1DF=as.data.frame(res.coef1_1)
+write.csv(res.coef1_1DF, file = "fit.cont1_1.csv")
 
-```{r eval=FALSE, include=FALSE}
-basicProfile(genelist=fit.cont1, idType="GoTermsFrame", onto ="ANY", level=2, orgPackage=NULL)
+# Seleccionamos la información referente a la comparación CvsMS del primer sentido de lectura
+res.coef1_2=topTable(fit.cont1, coef=2, number=378, sort.by="p", resort.by="logFC")
+res.coef1_2DF=as.data.frame(res.coef1_2)
+write.csv(res.coef1_2DF, file = "fit.cont1_2.csv")
+
+# Seleccionamos la información referente a la comparación CvsMV del segundo sentido de lectura
+res.coef2_1=topTable(fit.cont2, coef=1, number=2942, sort.by="p", resort.by="logFC")
+res.coef2_1DF=as.data.frame(res.coef2_1)
+write.csv(res.coef2_1DF, file = "fit.cont2_1.csv")
+
+# Seleccionamos la información referente a la comparación CvsMS del segundo sentido de lectura
+res.coef2_2=topTable(fit.cont2, coef=2, number=384, sort.by="p", resort.by="logFC")
+res.coef2_2DF=as.data.frame(res.coef2_2)
+write.csv(res.coef2_2DF, file = "fit.cont2_2.csv")
 ```
 

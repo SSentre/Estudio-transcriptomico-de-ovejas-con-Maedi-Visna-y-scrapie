@@ -828,7 +828,7 @@ LOC114109432 -6.390394  1.2343823 -4.238944 0.0011110557 0.7885556 -4.582663</co
 <h2><span class="header-section-number">2.5</span> Anotación de los resultados</h2>
 <p>Para poder extraer más información de la lista de genes obtenida anteriormente vamos a crear un nuevo data.frame con nueva información como puede ser el nombre completo del gen o su símbolo. Vamos a tener que utilizar el paquete <em>AnnotationHub</em> que contiene un objeto <em>OrgDb</em> preconfigurado con la información genética de la oveja basada en NCBI Gene IDs.</p>
 <div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>ah<span class="ot">=</span><span class="fu">AnnotationHub</span>()</span></code></pre></div>
-<pre><code>using temporary cache C:\Users\delfi\AppData\Local\Temp\RtmpKM1pCZ/BiocFileCache</code></pre>
+<pre><code>using temporary cache C:\Users\delfi\AppData\Local\Temp\RtmpYBqJtp/BiocFileCache</code></pre>
 <pre><code>snapshotDate(): 2020-10-27</code></pre>
 <div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">query</span>(ah, <span class="fu">c</span>(<span class="st">&quot;Ovis aries&quot;</span>, <span class="st">&quot;OrgDb&quot;</span>))</span></code></pre></div>
 <pre><code>AnnotationHub with 1 record
@@ -1155,7 +1155,26 @@ LOC114109432 0.7885556 -4.582663</code></pre>
 </div>
 <div id="análisis-de-significación-biológica" class="section level2" number="2.6">
 <h2><span class="header-section-number">2.6</span> Análisis de significación biológica</h2>
-<p>El siguiente paso en nuestro análisis es realizar un análisis de gene ontology (GO) con la siguiente función:</p>
+<p>El siguiente paso en nuestro análisis es realizar un análisis de significación biológica, lo vamos a hacer con la herramienta web <em>Enrichr</em> por lo que necesitamos exportar los resultados que hemos obtenido. Vamos a exportarlos a archivos csv teniendo en cuenta el p valor y ordenándolos en relación a <em>loFC</em> para diferenciar los genes sobreexpresados y los que tienen una menor expresión génica.</p>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionamos la información referente a la comparación CvsMV del primer sentido de lectura</span></span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>res.coef1_1<span class="ot">=</span><span class="fu">topTable</span>(fit.cont1, <span class="at">coef=</span><span class="dv">1</span>, <span class="at">number=</span><span class="dv">2949</span>, <span class="at">sort.by=</span><span class="st">&quot;p&quot;</span>, <span class="at">resort.by=</span><span class="st">&quot;logFC&quot;</span>)</span>
+<span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a>res.coef1_1DF<span class="ot">=</span><span class="fu">as.data.frame</span>(res.coef1_1)</span>
+<span id="cb141-4"><a href="#cb141-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(res.coef1_1DF, <span class="at">file =</span> <span class="st">&quot;fit.cont1_1.csv&quot;</span>)</span>
+<span id="cb141-5"><a href="#cb141-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-6"><a href="#cb141-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionamos la información referente a la comparación CvsMS del primer sentido de lectura</span></span>
+<span id="cb141-7"><a href="#cb141-7" aria-hidden="true" tabindex="-1"></a>res.coef1_2<span class="ot">=</span><span class="fu">topTable</span>(fit.cont1, <span class="at">coef=</span><span class="dv">2</span>, <span class="at">number=</span><span class="dv">378</span>, <span class="at">sort.by=</span><span class="st">&quot;p&quot;</span>, <span class="at">resort.by=</span><span class="st">&quot;logFC&quot;</span>)</span>
+<span id="cb141-8"><a href="#cb141-8" aria-hidden="true" tabindex="-1"></a>res.coef1_2DF<span class="ot">=</span><span class="fu">as.data.frame</span>(res.coef1_2)</span>
+<span id="cb141-9"><a href="#cb141-9" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(res.coef1_2DF, <span class="at">file =</span> <span class="st">&quot;fit.cont1_2.csv&quot;</span>)</span>
+<span id="cb141-10"><a href="#cb141-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-11"><a href="#cb141-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionamos la información referente a la comparación CvsMV del segundo sentido de lectura</span></span>
+<span id="cb141-12"><a href="#cb141-12" aria-hidden="true" tabindex="-1"></a>res.coef2_1<span class="ot">=</span><span class="fu">topTable</span>(fit.cont2, <span class="at">coef=</span><span class="dv">1</span>, <span class="at">number=</span><span class="dv">2942</span>, <span class="at">sort.by=</span><span class="st">&quot;p&quot;</span>, <span class="at">resort.by=</span><span class="st">&quot;logFC&quot;</span>)</span>
+<span id="cb141-13"><a href="#cb141-13" aria-hidden="true" tabindex="-1"></a>res.coef2_1DF<span class="ot">=</span><span class="fu">as.data.frame</span>(res.coef2_1)</span>
+<span id="cb141-14"><a href="#cb141-14" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(res.coef2_1DF, <span class="at">file =</span> <span class="st">&quot;fit.cont2_1.csv&quot;</span>)</span>
+<span id="cb141-15"><a href="#cb141-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-16"><a href="#cb141-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionamos la información referente a la comparación CvsMS del segundo sentido de lectura</span></span>
+<span id="cb141-17"><a href="#cb141-17" aria-hidden="true" tabindex="-1"></a>res.coef2_2<span class="ot">=</span><span class="fu">topTable</span>(fit.cont2, <span class="at">coef=</span><span class="dv">2</span>, <span class="at">number=</span><span class="dv">384</span>, <span class="at">sort.by=</span><span class="st">&quot;p&quot;</span>, <span class="at">resort.by=</span><span class="st">&quot;logFC&quot;</span>)</span>
+<span id="cb141-18"><a href="#cb141-18" aria-hidden="true" tabindex="-1"></a>res.coef2_2DF<span class="ot">=</span><span class="fu">as.data.frame</span>(res.coef2_2)</span>
+<span id="cb141-19"><a href="#cb141-19" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(res.coef2_2DF, <span class="at">file =</span> <span class="st">&quot;fit.cont2_2.csv&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 </section>
