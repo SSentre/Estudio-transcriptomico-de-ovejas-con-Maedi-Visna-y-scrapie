@@ -11,3 +11,5 @@ La carpeta **2. STAR** contiene los archivos con el código relevante al anális
 - El archivo llamado **Workflow STAR lecturas sin alinear.txt** contiene los comandos que se han utilizado para seleccionar las lecturas no alineadas obtenidas en el paso anterior de alineamiento con STAR y el alineamiento de estas lecturas contra el genoma del lentivirus Maedi-Visna tanto con la herramienta Bowtie2 como con STAR.
 
 La carpeta **3. R + Bioconductor** contiene los archivos con el *counting* de cada una de las muerstras obtenido gracias a los alienamientos con STAR, un archivo .txt con la información de las muestras a analizar, un archivo .RMD con el worfflow y los comandos que se han utilizado en R y *Bioconductor* para realizar el análisis de expresión diferencial y un archivo .HTML y otro .PDF con el output de R Markdown de esos comandos.
+
+La carpeta **4. ROP** contiene el archivo llamado **Workflow ROP lecturas sin alinear.txt** con los comandos utilizados en el análisis realizado con la herramienta ROP sobre las lecturas sin alinear contra el genoma de referencia de la oveja.
